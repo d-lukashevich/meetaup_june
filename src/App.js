@@ -2,6 +2,7 @@ import React, { useEffect, useReducer } from 'react';
 import RebootCss from 'core-lib-react/globalStyles/RebootCss';
 import Fonts from 'core-lib-react/globalStyles/Fonts';
 import CommonStyles from 'core-lib-react/globalStyles/CommonStyles';
+import Resize from 'core-lib-react/resize';
 
 import TablePage from './components/TablePage';
 
@@ -21,14 +22,14 @@ function App() {
   }, [dispatchPeople]);
 
   return (
-    <>
+    <Resize>
       <RebootCss />
       <Fonts />
       <CommonStyles />
       <div style={{ padding: 15 }}>
         <TablePage {...{ people }} />
       </div>
-    </>
+    </Resize>
   );
 }
 
