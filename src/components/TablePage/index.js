@@ -1,5 +1,5 @@
-import React, { useContext, useMemo } from 'react';
-import { Table, Thead, Tbody, Row, Cell, Sorter, Filter, filters } from 'core-lib-react/components/Table';
+import React, { useContext, useMemo, useState } from 'react';
+import { Table, Thead, Tbody, Row, Cell, Sorter, Filter, filters, sorters } from 'core-lib-react/components/Table';
 import { ResizeContext } from 'core-lib-react/resize';
 import getColorList from './utils';
 
@@ -9,13 +9,15 @@ const Page = ({ people }) => {
   const { width } = useContext(ResizeContext);
   const cellWidths = [width < 900 ? 300 : 'auto', 170];
 
+  const [nameSorter, setNameSorter] = useState(() => sorters.asc(0));
+
   const colorList = useMemo(() => getColorList(people), [people]);
 
   return (
     <div>
       <Table
         filters={[filters.oneOf(1, genders), filters.oneOf(3, Object.values(colorList))]}
-        sorters={[]}
+        sorters={[...(nameSorter ? [nameSorter] : [])]}
         defaultResizable={true}
         minCellWidths={[300, 170]}
         cellWidths={cellWidths}
@@ -23,7 +25,19 @@ const Page = ({ people }) => {
         defaultCellWidth={150}>
         <Thead>
           <Row>
-            <Cell leftSlot={<Sorter />}>Name</Cell>
+            <Cell
+              leftSlot={
+                <Sorter
+                  isControlled={true}
+                  onClick={(e, direction) => {
+                    setNameSorter(() => {
+                      return direction === 'normal' ? null : sorters[direction](0);
+                    });
+                  }}
+                />
+              }>
+              Name
+            </Cell>
             <Cell rightSlot={<Filter filterType={'oneOf'} />}>Gender</Cell>
             <Cell>Homeworld</Cell>
             <Cell leftSlot={<Filter filterType={'oneOf'} />}>Eye color</Cell>
