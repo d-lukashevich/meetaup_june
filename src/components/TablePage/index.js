@@ -10,13 +10,14 @@ const Page = ({ people }) => {
   const cellWidths = [width < 900 ? 300 : 'auto', 170];
 
   const [nameSorter, setNameSorter] = useState(() => sorters.asc(0));
+  const [genderFilter, setGenderFilter] = useState(() => filters.oneOf(1, genders));
 
   const colorList = useMemo(() => getColorList(people), [people]);
 
   return (
     <div>
       <Table
-        filters={[filters.oneOf(1, genders), filters.oneOf(3, Object.values(colorList))]}
+        filters={[genderFilter, filters.oneOf(3, Object.values(colorList))]}
         sorters={[...(nameSorter ? [nameSorter] : [])]}
         defaultResizable={true}
         minCellWidths={[300, 170]}
@@ -38,7 +39,18 @@ const Page = ({ people }) => {
               }>
               Name
             </Cell>
-            <Cell rightSlot={<Filter filterType={'oneOf'} />}>Gender</Cell>
+            <Cell
+              rightSlot={
+                <Filter
+                  value={genderFilter.compare}
+                  updateFilter={(compare) => {
+                    setGenderFilter(() => filters.oneOf(1, compare));
+                  }}
+                  filterType={'oneOf'}
+                />
+              }>
+              Gender
+            </Cell>
             <Cell>Homeworld</Cell>
             <Cell leftSlot={<Filter filterType={'oneOf'} />}>Eye color</Cell>
             <Cell rightSlot={<Sorter />}>Height</Cell>
